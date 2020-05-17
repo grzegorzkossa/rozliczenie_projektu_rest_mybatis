@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="pl.lomza.programowanie.rozliczenie_projektu_rest_mybatis.mappers.TransportDAO">
+    <select id="getRides" resultType="pl.lomza.programowanie.rozliczenie_projektu_rest_mybatis.common.Ride">
+        <![CDATA[
+        SELECT r.id, r.rideDate, r.counterBefore, r.counterAfter, r.km,
+        r.whence, r.`where`, r.rideKind, r.fuelCondition, r.fuelAdd, r.fuelAfter,
+        SUM(s.fuel) as fuel, f.price, SUM(s.fuel*f.price) as currency, r.fuelNorm
+        FROM transportMyBatis.Ride r
+        LEFT JOIN transportMyBatis.Settlement  s on r.id = s.idRide
+        LEFT JOIN transportMyBatis.Refuel f on f.id = s.idRefuel
+        WHERE r.idVehicle = #{vehicleId}
+        GROUP BY r.id, r.whence, r.`where`, r.rideKind, f.price
+        ORDER BY r.id
+        ]]>
+    </select>
+    <select id="getRide" resultType="pl.lomza.programowanie.rozliczenie_projektu_rest_mybatis.common.Ride">
+        <![CDATA[
+        SELECT r.id, r.rideDate, r.counterBefore, r.counterAfter, r.km,
+        r.whence, r.`where`, r.rideKind, r.fuelCondition, r.fuelAdd, r.fuelAfter,
+        SUM(s.fuel) as fuel, f.price, SUM(s.fuel*f.price) as currency, r.fuelNorm
+        FROM transportMyBatis.Ride r
+        LEFT JOIN transportMyBatis.Settlement  s on r.id = s.idRide
+        LEFT JOIN transportMyBatis.Refuel f on f.id = s.idRefuel
+        WHERE r.idVehicle = #{vehicleId} and r.id = #{rideId}
+        GROUP BY r.id, r.whence, r.`where`, r.rideKind, f.price
+        ORDER BY r.id
+        ]]>
+    </select>
+</mapper>
